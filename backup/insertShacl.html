@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    console.log("Starting...");
+    var queryStr = "prefix schema: <http://schema.org/>"
+    + " prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+    + " prefix sh: <http://www.w3.org/ns/shacl#>"
+    + " prefix xsd: <http://www.w3.org/2001/XMLSchema#>"
+    + " insert data { graph <http://shaclid8> { "
+        + " schema:PersonShape"+
+"        a sh:NodeShape ;"+
+"        sh:targetClass schema:Person ;"+
+"        sh:property ["+
+"            sh:path schema:givenName ;"+
+"            sh:datatype xsd:string ;"+
+"            sh:name \"given name\" ;"+
+"        ] ;"+
+"        sh:property ["+
+"            sh:path schema:birthDate ;"+
+"            sh:lessThan schema:deathDate ;"+
+"            sh:maxCount 1 ;"+
+"        ] ;"+
+"        sh:property ["+
+"            sh:path schema:gender ;"+
+"            sh:in ( \"female\" \"male\" ) ;"+
+"        ] ;"+
+"        sh:property ["+
+"            sh:path schema:address ;"+
+"            sh:node schema:AddressShape ;"+
+"        ] ."+
+""+
+"    schema:AddressShape"+
+"        a sh:NodeShape ;"+
+"        sh:closed true ;"+
+"        sh:property ["+
+"            sh:path schema:streetAddress ;"+
+"            sh:datatype xsd:string ;"+
+"        ] ;"+
+"        sh:property ["+
+"            sh:path schema:postalCode ;"+
+"            sh:or ( [ sh:datatype xsd:string ] [ sh:datatype xsd:integer ] ) ;"+
+"            sh:minInclusive 10000 ;"+
+"            sh:maxInclusive 99999 ;"+
+"        ] ."
+        + "} }";
+    var endpoint = "http://localhost:8080/sparql/master";
+    var querypart = queryStr;
+
+    // Get our HTTP request object.
+    var xmlhttp = null;
+    if (window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+        // Code for older versions of IE, like IE6 and before.
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    } else {
+        alert('Perhaps your browser does not support XMLHttpRequests?');
+    }
+
+    // Set up a POST with JSON result format.
+    xmlhttp.open('POST', endpoint, true); // GET can have caching probs, so POST
+    xmlhttp.setRequestHeader('Content-type', 'application/sparql-update');
+
+    // Set up callback to get the response asynchronously.
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4) {
+            if (xmlhttp.status == 200) {
+                // Process the results
+                document.write(xmlhttp.responseText);
+                //callback(xmlhttp.responseText);
+                console.log("finished with success");
+                document.write("finished with success");
+            } else {
+                // Some kind of error occurred.
+                alert("Sparql query error: " + xmlhttp.status + " " + xmlhttp.responseText);
+            }
+        }
+    };
+    xmlhttp.send(querypart);
+</script>
+</body>
+</html>

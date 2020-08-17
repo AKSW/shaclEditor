@@ -1,0 +1,205 @@
+
+<!DOCTYPE>
+
+<html>
+
+<head>
+<title>Shacl-gui editor</title>
+
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta name="viewport"
+	content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+
+<link href="./css/cytoscape-context-menus.css" rel="stylesheet"
+	type="text/css" />
+
+<link href="./css/mystyle.css" rel="stylesheet"
+	type="text/css" />
+
+	<script src="js/jquery.min.js"></script>
+	<script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+	<script src="./js/cytoscape-context-menus.js"></script>
+	<script src="http://marvl.infotech.monash.edu/webcola/cola.min.js"></script>
+	<script src="./js/cytoscape-cola.js"></script>
+	<script src="./js/Turtle.js"></script>
+	<script src="./js/ShaclData.js"></script>
+	<script src="./js/main.js"></script>
+	<script src="./js/shacl.js"></script>
+	<script src="./js/util.js"></script>
+	<script src="./js/data.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.js"></script>
+	<script src="./js/cytoscape-edgehandles.js"></script>
+</head>
+
+<body onload="checkFirstVisit()">
+	<div id="addDiv" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content autocomplete">
+			<span onclick="spanClick('addDiv');" class="close">&times;</span>
+			<p>
+				Class name:
+				<input type="text" id="txtClassName" onfocus="makeAutoComplete(this.id);">
+			</p>
+			<div class="btn-group">
+				<button id="btnAddClass" class="button" onclick="addClass();">addClass</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="addPropDiv" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content autocomplete">
+			<span onclick="spanClick('addPropDiv');" class="close">&times;</span>
+			<p>
+				Property:
+				<input type="text" id="txtProp" onfocus="makeAutoComplete(this.id);">
+				Value - RDF term:
+				<input type="text" id="txtValue" onfocus="makeAutoComplete(this.id);">
+			</p>
+			<div class="btn-group">
+				<button id="btnAddProp" class="button" onclick="addProp();">addProp</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="addShConstraint" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span onclick="spanClick('addShConstraint');" class="close">&times;</span>
+			<p>
+				Constraint property
+				<textarea rows="3" cols="100" spellcheck="false" id="txtShProp"></textarea>
+				<button id="btnSugShConst" class="button" onclick="sugShConstraint();">Suggested constraint</button>
+				<a href="examplesShaclConst.html" target="_blank">Another suggested examples(click here).</a>
+			</p>
+			<div class="btn-group">
+				<button id="btnAddShConst" class="button" onclick="addShConstraint();">addProp</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="addShDiv" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content autocomplete">
+			<span onclick="spanClick('addShDiv');" class="close">&times;</span>
+			<p>
+				Name
+				<input type="text" id="txtShClassName" onfocus="makeAutoComplete(this.id);">
+			</p>
+			<p>
+			<div class="btn-group">
+				<button id="btnAddShacl" class="button" onclick="addShacl();">add Shacl Shape</button>
+			</div>
+			</p>
+		</div>
+	</div>
+
+	<div id="divEditClass" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content autocomplete">
+			<span onclick="spanClick('divEditClass');" class="close">&times;</span>
+			<p>
+				Class name:
+				<input type="text" readonly id="txtEdClassName">
+			</p>
+			<p>
+				Extend class:
+				<input type="text" id="txtEdClassExtend" onfocus="makeAutoComplete(this.id);">
+			</p>
+			<p>
+				Properties and RDF terms:
+			</p>
+			<div id="container" class="prop-value autocomplete"></div>
+			<div class="btn-group">
+				<button id="btnEdClass" class="button" onclick="saveClass();">Save changes</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="addPropClassDiv" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content autocomplete">
+			<span onclick="spanClick('addPropClassDiv');" class="close">&times;</span>
+			<p>
+				Choose a class:
+				<select name="cbclasses" id="cbclasses" onchange="getProps()">
+				</select>
+			</p>
+			<p>
+				Choose the property to relate:
+				<select name="cboprops" id="cboprops">
+				</select>
+			</p>
+			<div class="btn-group">
+				<button id="btnaddPropClass" class="button" onclick="savePropClass();">Save changes</button>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="divEditShacl" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span onclick="spanClick('divEditShacl');" class="close">&times;</span>
+			<p>
+				Target class:
+				<input type="text" readonly id="txtEdTargetClassName">
+			</p>
+			<p>
+				Shacl constraints:
+			</p>
+			<div id="containerShacl"></div>
+			<div class="btn-group">
+				<button id="btnEdShacl" class="button" onclick="saveShacl();">Save changes</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="divLoadProject" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+			<span onclick="spanClick('divLoadProject');" class="close">&times;</span>
+			<p>
+				 Identification number:
+				<input type="text" id="txtIdProject">
+			</p>
+			or
+			<p>Input the RDF triples(tested with N-Triples until the moment) or SPARQL query:</p>
+			<textarea rows="15" cols="100" spellcheck="false" id="txtLoad"></textarea>
+			<div class="btn-group">
+				<button id="btnLoad" class="button" onclick="loadProject();">Load</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="menu" class="column left">
+		<div class="btn-group">
+			<button id="btnAddNode" class="button" onclick="showDiv('addDiv');">Add Class</button>
+			<button id="btnLoadProject" class="button" onclick="showDiv('divLoadProject');">Load Project</button>
+			<button id="btnSaveProject" class="button" onclick="saveProject();">Save Project</button>
+			<button id="btnQueryEndPoint" class="button" onclick="window.location.href='http://localhost:8080/sparql/master';">Query SPARQL End Point</button>
+			<button id="btnShaclValidation" class="button" onclick="makeValidation();">Shacl
+				Validation</button>
+			<button id="btnUpdateUI" class="button" onclick="organizeUI();">Organize Graph</button>
+			<button id="btnShaclText" title="Try an example of SHACL Textual Validation" class="button" onclick="window.location.href='shacltext.html';">
+				SHACL Textual example</button>
+			<button id="btnGitHub" title="fork me on github" style="background-color: red" class="button" onclick="window.location.href='https://github.com/firmao/shaclEditor/';">
+				Fork me on GitHub</button>
+		</div>
+
+	</div>
+	<div id="cy" class="column middle"></div>
+	<div id="code" class="column right">
+		<textarea rows="15" cols="50" spellcheck="false" id="txtCode"></textarea>
+		<p>
+			<textarea rows="15" cols="50" spellcheck="false" id="txtShacl"></textarea>
+		</p>
+		<p>
+			<textarea rows="5" cols="50" spellcheck="false" id="report"></textarea>
+		</p>
+	</div>
+	<br>
+</body>
+
+</html>

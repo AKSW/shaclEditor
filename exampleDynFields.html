@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>ReLOD demo dataset visual similarity relations</title>
+</head>
+
+<body>
+<h1>ReLOD demo dataset visual similarity relations</h1>
+
+<script>
+	//async request to the url -> print the result
+	function httpPostAsync(theUrl) {
+		var xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = function() {
+			//if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+				//query worked
+				document.write(xmlHttp.responseText);
+				//xmlHttp.abort();
+			//}
+		}
+		xmlHttp.open("POST", theUrl, true);
+		xmlHttp.send(null);
+	}
+
+	const server = "http://localhost:3030/d1";
+
+	let query = "INSERT DATA{ <http://example/book888> <http://purl.org/dc/elements/1.1/title> \"oooA new book5\"}";
+	let queryUrl = server + "?update=" + encodeURIComponent(query);
+	console.log(queryUrl);
+	httpPostAsync(queryUrl);
+
+	/*query = "Select * where {<http://example/book888> ?p ?o}";
+	queryUrl = server + "?query=" + encodeURIComponent(query);
+	console.log(queryUrl);
+	httpPostAsync(queryUrl);*/
+</script>
+</body>
+
+</html>
