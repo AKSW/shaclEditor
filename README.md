@@ -1,4 +1,4 @@
-# shaclEditor
+# VocEditor
 An integrated environment for Visualizing, Validate, and Versioning RDF graph
 
 ### Requirements:
@@ -12,11 +12,11 @@ We have two ways, a simple in which you just need to execute a command line, but
 
 ### First way(Non safe, but fast and simple):
 Execute this comand in your bash. 
-- This commmand will automatically (1) Clone the repository, (2) Giving administrative permissions to the shaclEditor directory, (3) Prune all existing docker instances, (3) Initialize the QUIT store:
+- This commmand will automatically (1) Clone the repository, (2) Giving administrative permissions to the VocEditor directory, (3) Prune all existing docker instances, (3) Initialize the QUIT store:
 ```
 bash <(curl -s https://raw.githubusercontent.com/firmao/shaclEditor/master/InstallShaclEditor.sh)
 ```
-after all, inside shaclEditor directory, open the index.html in your web-browser.
+after all, inside VocEditor directory, open the index.html in your web-browser.
 
 ### Second way (step by step and safe)
 Clone the repository:
@@ -37,7 +37,7 @@ Now the QUIT store are supposed to be running at http://localhost:8080/ and we n
 ```
 curl -d "insert data { graph <http://example.org/> { <urn:shacleditor> <http://shacleditor#id> 0 } }" -H "Content-Type: application/sparql-update"  http://localhost:8080/sparql
 ```
-after all, inside shaclEditor directory, open the index.html in your web-browser.
+after all, inside VocEditor directory, open the index.html in your web-browser.
 ____________________
 # Screencast
 A video with a minimal example [here](https://youtu.be/c_3CL3FqVlw), just a proof of concept of a very first stage of this project (now should be different).
